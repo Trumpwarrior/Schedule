@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +15,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        options = (Button) findViewById(R.id.options);
+        options = findViewById(R.id.options);
         options.setOnClickListener(this);
 
-        shedule = (Button) findViewById(R.id.shedule);
+        shedule = findViewById(R.id.shedule);
         shedule.setOnClickListener(this);
     }
 

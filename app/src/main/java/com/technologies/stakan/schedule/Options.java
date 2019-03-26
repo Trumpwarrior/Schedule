@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.technologies.stakan.stakanshedule.dataStructures.*;
+import com.technologies.stakan.schedule.SQLiteANDTimeParser.*;
 
 public class Options extends AppCompatActivity implements View.OnClickListener {
 

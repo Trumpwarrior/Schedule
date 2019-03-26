@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
@@ -7,9 +7,9 @@ import android.widget.EditText;
 
 import java.util.List;
 
-import com.technologies.stakan.stakanshedule.dataStructures.AppDataBase;
-import com.technologies.stakan.stakanshedule.dataStructures.Lesson;
-import com.technologies.stakan.stakanshedule.dataStructures.LessonDao;
+import com.technologies.stakan.schedule.SQLiteANDTimeParser.AppDataBase;
+import com.technologies.stakan.schedule.SQLiteANDTimeParser.Lesson;
+import com.technologies.stakan.schedule.SQLiteANDTimeParser.LessonDao;
 
 public class Schedule extends AppCompatActivity {
 
@@ -20,7 +20,7 @@ public class Schedule extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shedule);
 
-        editText = (EditText) findViewById(R.id.editText);
+        editText = findViewById(R.id.editText);
 
         AppDataBase db =  Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "database").allowMainThreadQueries().build();
         LessonDao lessonDao = db.lessonDao();

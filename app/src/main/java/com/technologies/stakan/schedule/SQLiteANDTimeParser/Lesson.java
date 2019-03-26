@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule.dataStructures;
+package com.technologies.stakan.schedule.SQLiteANDTimeParser;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

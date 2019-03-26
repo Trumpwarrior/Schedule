@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import org.junit.Test;
 

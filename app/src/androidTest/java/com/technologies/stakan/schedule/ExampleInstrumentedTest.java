@@ -1,4 +1,4 @@
-package com.technologies.stakan.stakanshedule;
+package com.technologies.stakan.schedule;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
