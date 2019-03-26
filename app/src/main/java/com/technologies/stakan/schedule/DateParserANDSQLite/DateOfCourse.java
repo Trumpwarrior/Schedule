@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.SQLiteANDTimeParser;
+package com.technologies.stakan.schedule.DateParserANDSQLite;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

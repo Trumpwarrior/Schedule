@@ -3,46 +3,77 @@ package com.technologies.stakan.schedule;
 import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.technologies.stakan.schedule.SQLiteANDTimeParser.AppDataBase;
-import com.technologies.stakan.schedule.SQLiteANDTimeParser.Lesson;
-import com.technologies.stakan.schedule.SQLiteANDTimeParser.LessonDao;
+import com.technologies.stakan.schedule.DateParserANDSQLite.AppDataBase;
+import com.technologies.stakan.schedule.DateParserANDSQLite.DateOfCourse;
+import com.technologies.stakan.schedule.DateParserANDSQLite.Lesson;
+import com.technologies.stakan.schedule.DateParserANDSQLite.LessonDao;
 
 public class Schedule extends AppCompatActivity {
 
-    EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shedule);
 
-        editText = findViewById(R.id.editText);
+        final int DAYS = 6;
+        final int LESSONS = 8;
 
         AppDataBase db =  Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "database").allowMainThreadQueries().build();
         LessonDao lessonDao = db.lessonDao();
-        Lesson lesson = new Lesson();
 
         List<Lesson> allLessons = lessonDao.getAll();
+        List<Lesson> lessons = new ArrayList<Lesson>();
 
-        for(int i = 0; i < allLessons.size(); i++) {
+        DateOfCourse date = new DateOfCourse();
 
-            lesson = allLessons.get(i);
+        final TableLayout table = /*TableLayout*/ findViewById(R.id.table);
+        TextView infoText;
 
-            editText.setText(editText.getText() + " " +
-                    lesson.name + " " +
-                    lesson.nameOfTeacher + " " +
-                    lesson.audienceNumber + " " +
-                    lesson.typeOfLesson + " " +
-                    lesson.beginningOfCourse + " " +
-                    lesson.endingOfCourse + " " +
-                    lesson.numberOfPara + " " +
-                    lesson.alternation + "\n");
+//КАКОЙ-ТО НЕПОНЯТНЫЙ ФОР, ТРОГАТЬ ЕГО КОНЕЧНО ЖЕ НЕ СТОИТ (ПОПРАВЛЮ МЕЙБИ)
+
+        for (int day = 0; day < DAYS; day++) {
+
+            for (int i = 0; i < allLessons.size();i++) {
+                date.processMyDate(allLessons.get(i).beginningOfCourse);
+                if(date.timeOfCourse.get(Calendar.DAY_OF_WEEK) == day) {
+                    lessons.add(allLessons.get(i));
+                }
+            }
+
+            TableRow tableRow = new TableRow(this);
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.WRAP_CONTENT));
+
+            for (int lesson = 0; lesson < LESSONS; lesson++) {
+                infoText = /*TextView*/ new TextView(this);
+
+                for (int i = 0; i < lessons.size();i++) {
+                    if (Integer.parseInt(lessons.get(i).numberOfPara) == lesson) {
+                        infoText.setText(lessons.get(i).toString());
+                    }
+                }
+
+
+                tableRow.addView(infoText, lesson);
+            }
+
+            lessons.clear();
+            table.addView(tableRow, day);
         }
+
     }
 
-
 }
+
+
+

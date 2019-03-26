@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.technologies.stakan.schedule.SQLiteANDTimeParser.*;
+import com.technologies.stakan.schedule.DateParserANDSQLite.*;
 
 public class Options extends AppCompatActivity implements View.OnClickListener {
 
@@ -85,14 +85,13 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
                 Calendar thisTime = new GregorianCalendar();//нужно для того, чтобы взять текущее время и сравнить с началом курса
                 thisTime.set(Calendar.HOUR_OF_DAY,1);//ставим время на начало дня
-                plusBegOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,2);//время начала курса позже, потому что иначе если в 1 день, то не поставится(костыль, но удобный)
+                plusBegOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,2);//время начала курса позже, потому что иначе если в 1 день, то не поставится
                 plusEndOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);//чтобы можно было поставить однодневное занятие(еще веселее на 2 микрокостылях)
 
                 if(plusBegOfCouse.getYear() < 1000){check.setText("Некорректно введённая дата начала");return;}//вот эти штуки проверяют дату!! Они молодцы, хоть и логика странная тут
                 if(plusEndOfCouse.getYear() < 1000){check.setText("Некорректно введённая дата окончания");return;}
                 if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) != plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK)){check.setText("День недели начала и окончания не совпадают");return;}
                 if(plusBegOfCouse.timeOfCourse.after(plusEndOfCouse.timeOfCourse)) {check.setText("Дата начала позже даты окончания");return;}
-                if(plusBegOfCouse.timeOfCourse.before(thisTime)) {check.setText("Дата начала раньше сегоднешнего дня");return;}
 
 
                 LessonDao lessonDao = db.lessonDao();
@@ -101,7 +100,7 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
                 lesson.name = name.getText().toString();
                 lesson.nameOfTeacher = nameOfTeacher.getText().toString();
                 lesson.audienceNumber = audienceNumber.getText().toString();
-                lesson.typeOfLesson = String.valueOf(typeOfLesson.getSelectedItemId());
+                lesson.typeOfLesson = typeData[(int)typeOfLesson.getSelectedItemId()];
                 lesson.beginningOfCourse = beginningOfCourse.getText().toString();
                 lesson.endingOfCourse = endingOfCourse.getText().toString();
                 lesson.numberOfPara = String.valueOf(numberOfPara.getSelectedItemId());

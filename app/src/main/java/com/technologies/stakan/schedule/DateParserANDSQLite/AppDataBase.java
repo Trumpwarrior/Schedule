@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.SQLiteANDTimeParser;
+package com.technologies.stakan.schedule.DateParserANDSQLite;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
