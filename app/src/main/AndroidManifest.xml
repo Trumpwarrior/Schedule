@@ -17,7 +17,9 @@
             </intent-filter>
          </activity>
         <activity android:name="com.technologies.stakan.schedule.Options" />
-        <activity android:name="com.technologies.stakan.schedule.Schedule"></activity>
+        <activity android:name="com.technologies.stakan.schedule.Schedule"
+            android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>
