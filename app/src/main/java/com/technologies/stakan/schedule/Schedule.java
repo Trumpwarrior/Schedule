@@ -1,11 +1,12 @@
 package com.technologies.stakan.schedule;
 
 import android.arch.persistence.room.Room;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.widget.TableLayout;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -41,8 +42,9 @@ public class Schedule extends AppCompatActivity {
 
         DateOfCourse date = new DateOfCourse();
 
-        final TableLayout table = /*TableLayout*/ findViewById(R.id.table);
         TextView infoText;
+
+        LinearLayout.LayoutParams lpView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         TextView first = findViewById(R.id.first);
         TextView second = findViewById(R.id.second);
@@ -100,7 +102,9 @@ public class Schedule extends AppCompatActivity {
             for (int lesson = 0; lesson < LESSONS; lesson++) {
 
                 infoText = new TextView(this);
-                infoText.setGravity(Gravity.TOP);
+                LinearLayout linLayout = new LinearLayout(this);
+                linLayout.setOrientation(LinearLayout.VERTICAL);
+                infoText.setLayoutParams(lpView);
 
                 for (int i = 0; i < lessons.size();i++) {
                     if (Integer.parseInt(lessons.get(i).numberOfPara) == lesson) {
@@ -108,13 +112,23 @@ public class Schedule extends AppCompatActivity {
                     }
                 }
 
+
+
+                linLayout.addView(infoText);
+
+                if(!infoText.getText().equals("")) {
+                    infoText.setTextColor(Color.BLACK);
+                    infoText.setBackgroundColor(Color.WHITE);
+                    linLayout.setBackgroundResource(R.drawable.customborder);
+                }
+
                 switch (day) {
-                    case 0:firstDay.addView(infoText);break;
-                    case 1:secondDay.addView(infoText);break;
-                    case 2:thirdDay.addView(infoText);break;
-                    case 3:fourthDay.addView(infoText);break;
-                    case 4:fifthDay.addView(infoText);break;
-                    case 5:sixthDay.addView(infoText);break;
+                    case 0:firstDay.addView(linLayout);break;
+                    case 1:secondDay.addView(linLayout);break;
+                    case 2:thirdDay.addView(linLayout);break;
+                    case 3:fourthDay.addView(linLayout);break;
+                    case 4:fifthDay.addView(linLayout);break;
+                    case 5:sixthDay.addView(linLayout);break;
                 }
 
             }

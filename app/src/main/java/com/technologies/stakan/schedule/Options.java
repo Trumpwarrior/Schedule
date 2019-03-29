@@ -1,9 +1,12 @@
 package com.technologies.stakan.schedule;
 
 import android.arch.persistence.room.Room;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,28 +16,32 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.technologies.stakan.schedule.DateParserANDSQLite.*;
 
 public class Options extends AppCompatActivity implements View.OnClickListener {
 
-    EditText name;
-    EditText nameOfTeacher;
-    EditText audienceNumber;
-    Spinner typeOfLesson;
-    EditText beginningOfCourse;
-    EditText endingOfCourse;
-    Spinner numberOfPara;
-    Switch alternation;
-    Button addButton;
-    TextView check;
+    private EditText name;
+    private EditText nameOfTeacher;
+    private EditText audienceNumber;
+    private Spinner typeOfLesson;
+    private EditText beginningOfCourse;
+    private EditText endingOfCourse;
+    private Spinner numberOfPara;
+    private Switch alternation;
+    private Button addButton;
+    private TextView check;
 
-    AppDataBase db;
+    private AppDataBase db;
 
-    Integer[] paraData = {1, 2, 3, 4, 5, 6, 7, 8};
-    String[] typeData = {"Семинар","Лекция","Лабораторная"};
+    private final Integer[] paraData = {1, 2, 3, 4, 5, 6, 7, 8};
+    private final String[] typeData = {"Семинар","Лекция","Лабораторная"};
+
+    private boolean buttonAccessBeg;
+    private boolean buttonAccessEnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //создание всяких нужных штук и нахождение других нужных штук по id
@@ -63,7 +70,52 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
         alternation = /*Switch*/ findViewById(R.id.alternation);
         check = /*TextView*/ findViewById(R.id.check);
 
+
+
         addButton.setOnClickListener(this);
+        beginningOfCourse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Matcher dateMatcher = Pattern.compile("\\d\\d\\.\\d\\d").matcher(s);
+                if(!dateMatcher.matches()) {
+                    buttonAccessBeg = false;
+                    beginningOfCourse.setTextColor(Color.RED);
+                } else {
+                    buttonAccessBeg = true;
+                    beginningOfCourse.setTextColor(Color.GREEN);
+                }
+
+                addButton.setClickable(buttonAccessBeg && buttonAccessEnd);
+            }
+        });
+
+        endingOfCourse.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Matcher dateMatcher = Pattern.compile("\\d\\d\\.\\d\\d").matcher(s);
+                if(!dateMatcher.matches()) {
+                    buttonAccessEnd = false;
+                    endingOfCourse.setTextColor(Color.RED);
+                } else {
+                    buttonAccessEnd = true;
+                    endingOfCourse.setTextColor(Color.GREEN);
+                }
+
+                addButton.setClickable(buttonAccessBeg && buttonAccessEnd);
+            }
+        });
 
         db =  Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "database").allowMainThreadQueries().build();
     }
@@ -72,26 +124,32 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View view) {
         if(view.getId() == R.id.addButton) {
                 if (TextUtils.isEmpty(name.getText().toString())|| //проверка текстовых полей на пустоту
-                    TextUtils.isEmpty(nameOfTeacher.getText().toString()) ||
-                    TextUtils.isEmpty(audienceNumber.getText().toString()) ||
                     TextUtils.isEmpty(beginningOfCourse.getText().toString()) ||
                     TextUtils.isEmpty(endingOfCourse.getText().toString()))
-                { return; }
+                { check.setText("Введите название занятия");
+                    check.setTextColor(Color.RED);
+                    return;
+                }
 
-                DateOfCourse plusBegOfCouse = new DateOfCourse(); //создает объекты DateOfCourse, чтобы они все обработали и выдали Calendar в случае годной даты
+                DateOfCourse plusBegOfCouse = new DateOfCourse();
                 plusBegOfCouse.processMyDate(beginningOfCourse.getText().toString());
                 DateOfCourse plusEndOfCouse = new DateOfCourse();
                 plusEndOfCouse.processMyDate(endingOfCourse.getText().toString());
 
-                Calendar thisTime = new GregorianCalendar();//нужно для того, чтобы взять текущее время и сравнить с началом курса
-                thisTime.set(Calendar.HOUR_OF_DAY,1);//ставим время на начало дня
                 plusBegOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,2);//время начала курса позже, потому что иначе если в 1 день, то не поставится
-                plusEndOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);//чтобы можно было поставить однодневное занятие(еще веселее на 2 микрокостылях)
+                plusEndOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);//чтобы можно было поставить однодневное занятие
 
-                if(plusBegOfCouse.getYear() < 1000){check.setText("Некорректно введённая дата начала");return;}//вот эти штуки проверяют дату!! Они молодцы, хоть и логика странная тут
-                if(plusEndOfCouse.getYear() < 1000){check.setText("Некорректно введённая дата окончания");return;}
-                if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) != plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK)){check.setText("День недели начала и окончания не совпадают");return;}
-                if(plusBegOfCouse.timeOfCourse.after(plusEndOfCouse.timeOfCourse)) {check.setText("Дата начала позже даты окончания");return;}
+                if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) != plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK)) {
+                    check.setText("День недели начала и окончания не совпадают");
+                    check.setTextColor(Color.RED);
+                    return;
+                }
+
+                if(plusBegOfCouse.timeOfCourse.after(plusEndOfCouse.timeOfCourse)) {
+                    check.setText("Дата начала позже даты окончания");
+                    check.setTextColor(Color.RED);
+                    return;
+                }
 
 
                 LessonDao lessonDao = db.lessonDao();
@@ -118,14 +176,20 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
                 if(plusBegOfCouse.timeOfCourse.before(dateShallNotPass.timeOfCourse)) {
                     if(plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) == dateShallNotPass.timeOfCourse.get(Calendar.DAY_OF_WEEK)){
-                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){check.setText("На это время уже есть занятие");return;}
+                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){
+                            check.setText("На это время уже есть занятие");
+                            check.setTextColor(Color.RED);
+                            return;}
                     }
                 }
 
                 dateShallNotPass.processMyDate(allLessons.get(i).beginningOfCourse);//дата окончания записи должна быть позже даты начала из базы для пересечения
                 if(plusEndOfCouse.timeOfCourse.before(dateShallNotPass.timeOfCourse)) {
                     if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) == dateShallNotPass.timeOfCourse.get(Calendar.DAY_OF_WEEK)){
-                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){check.setText("На это время уже есть занятие");return;}
+                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){
+                            check.setText("На это время уже есть занятие");
+                            check.setTextColor(Color.RED);
+                            return;}
                     }
                 }
 
@@ -135,7 +199,11 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
 
 
-                check.setText("Все правильно. Занятие добавлено.");//если дошло, значит все cool
+                check.setText("Все правильно. Занятие добавлено.");
+            check.setTextColor(Color.GREEN);//если дошло, значит все cool
         }
+        }
+
+
+
     }
-}
