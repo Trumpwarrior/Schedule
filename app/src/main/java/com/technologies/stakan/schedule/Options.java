@@ -21,6 +21,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.technologies.stakan.schedule.DateParserANDSQLite.*;
+import com.technologies.stakan.schedule.Exceptions.DateException;
+import com.technologies.stakan.schedule.Exceptions.EmptyTextField;
+import com.technologies.stakan.schedule.Exceptions.IntersectionException;
 
 public class Options extends AppCompatActivity implements View.OnClickListener {
 
@@ -122,13 +125,16 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+
         if(view.getId() == R.id.addButton) {
-                if (TextUtils.isEmpty(name.getText().toString())|| //проверка текстовых полей на пустоту
-                    TextUtils.isEmpty(beginningOfCourse.getText().toString()) ||
-                    TextUtils.isEmpty(endingOfCourse.getText().toString()))
-                { check.setText("Введите название занятия");
-                    check.setTextColor(Color.RED);
-                    return;
+
+            try {
+
+                if(TextUtils.isEmpty(name.getText().toString()) ||
+                   TextUtils.isEmpty(beginningOfCourse.getText().toString()) ||
+                   TextUtils.isEmpty(endingOfCourse.getText().toString())) {
+
+                    throw new EmptyTextField();
                 }
 
                 DateOfCourse plusBegOfCouse = new DateOfCourse();
@@ -136,74 +142,57 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
                 DateOfCourse plusEndOfCouse = new DateOfCourse();
                 plusEndOfCouse.processMyDate(endingOfCourse.getText().toString());
 
-                plusBegOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,2);//время начала курса позже, потому что иначе если в 1 день, то не поставится
-                plusEndOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);//чтобы можно было поставить однодневное занятие
+                plusEndOfCouse.timeOfCourse.set(Calendar.HOUR_OF_DAY,2);
 
-                if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) != plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK)) {
-                    check.setText("День недели начала и окончания не совпадают");
-                    check.setTextColor(Color.RED);
-                    return;
-                }
-
-                if(plusBegOfCouse.timeOfCourse.after(plusEndOfCouse.timeOfCourse)) {
-                    check.setText("Дата начала позже даты окончания");
-                    check.setTextColor(Color.RED);
-                    return;
-                }
+                plusBegOfCouse.isBeginDateOf(plusEndOfCouse); //throws DateException
 
 
                 LessonDao lessonDao = db.lessonDao();
                 Lesson lesson = new Lesson();
 
-                lesson.name = name.getText().toString();
-                lesson.nameOfTeacher = nameOfTeacher.getText().toString();
-                lesson.audienceNumber = audienceNumber.getText().toString();
-                lesson.typeOfLesson = typeData[(int)typeOfLesson.getSelectedItemId()];
-                lesson.beginningOfCourse = beginningOfCourse.getText().toString();
-                lesson.endingOfCourse = endingOfCourse.getText().toString();
-                lesson.numberOfPara = String.valueOf(numberOfPara.getSelectedItemId());
-
-                if(alternation.isChecked())lesson.alternation = "true";
-                else lesson.alternation = "false";
+                initializeLesson(lesson);
 
                 List<Lesson> allLessons = lessonDao.getAll();
-                DateOfCourse dateShallNotPass = new DateOfCourse();//пересекающаяся дата не пройдёт!!!
 
-            for(int i = 0; i < allLessons.size(); i++) {
-
-                dateShallNotPass.processMyDate(allLessons.get(i).endingOfCourse);//дата начала записи должна быть раньше даты конца из базы для пересечения
-                dateShallNotPass.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);
-
-                if(plusBegOfCouse.timeOfCourse.before(dateShallNotPass.timeOfCourse)) {
-                    if(plusBegOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) == dateShallNotPass.timeOfCourse.get(Calendar.DAY_OF_WEEK)){
-                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){
-                            check.setText("На это время уже есть занятие");
-                            check.setTextColor(Color.RED);
-                            return;}
-                    }
-                }
-
-                dateShallNotPass.processMyDate(allLessons.get(i).beginningOfCourse);//дата окончания записи должна быть позже даты начала из базы для пересечения
-                if(plusEndOfCouse.timeOfCourse.before(dateShallNotPass.timeOfCourse)) {
-                    if(plusEndOfCouse.timeOfCourse.get(Calendar.DAY_OF_WEEK) == dateShallNotPass.timeOfCourse.get(Calendar.DAY_OF_WEEK)){
-                        if(allLessons.get(i).numberOfPara.equals(lesson.numberOfPara)){
-                            check.setText("На это время уже есть занятие");
-                            check.setTextColor(Color.RED);
-                            return;}
-                    }
-                }
-
-            }
+                lesson.isAnyIntersections(allLessons);//throws IntersectionException
 
                 lessonDao.insert(lesson);
 
-
-
                 check.setText("Все правильно. Занятие добавлено.");
-            check.setTextColor(Color.GREEN);//если дошло, значит все cool
+                check.setTextColor(Color.GREEN);
+
+
+            }
+            catch(EmptyTextField e) {
+                check.setText("Введите название занятия");
+                check.setTextColor(Color.RED);
+                return;
+            }
+            catch (DateException e) {
+                check.setText("Вы что-то напутали с датами");
+                check.setTextColor(Color.RED);
+            }
+            catch (IntersectionException e) {
+                check.setText("На это время уже есть занятие");
+                check.setTextColor(Color.RED);
+            }
+
         }
-        }
-
-
-
     }
+
+
+    void initializeLesson(Lesson lesson) {
+
+        lesson.name = name.getText().toString();
+        lesson.nameOfTeacher = nameOfTeacher.getText().toString();
+        lesson.audienceNumber = audienceNumber.getText().toString();
+        lesson.typeOfLesson = typeData[(int)typeOfLesson.getSelectedItemId()];
+        lesson.beginningOfCourse = beginningOfCourse.getText().toString();
+        lesson.endingOfCourse = endingOfCourse.getText().toString();
+        lesson.numberOfPara = String.valueOf(numberOfPara.getSelectedItemId());
+
+        if(alternation.isChecked()) lesson.alternation = "true";
+        else lesson.alternation = "false";
+    }
+
+}

@@ -1,5 +1,7 @@
 package com.technologies.stakan.schedule.DateParserANDSQLite;
 
+import com.technologies.stakan.schedule.Exceptions.DateException;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
@@ -45,4 +47,15 @@ public class DateOfCourse {
 
 
     }
+
+   public void isBeginDateOf(DateOfCourse endDate) throws DateException {
+
+        if(timeOfCourse.get(Calendar.DAY_OF_WEEK) != endDate.timeOfCourse.get(Calendar.DAY_OF_WEEK)) {
+            throw new DateException();
+        }
+        if(timeOfCourse.after(endDate.timeOfCourse)) {
+            throw new DateException();
+        }
+    }
+
 }
