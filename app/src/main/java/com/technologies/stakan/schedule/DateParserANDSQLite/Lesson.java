@@ -65,7 +65,7 @@ public class Lesson {
 
             thisDate.processMyDate(beginningOfCourse);
 
-            dateFromList.processMyDate(lessons.get(i).endingOfCourse);//дата начала записи должна быть раньше даты конца из базы для пересечения
+            dateFromList.processMyDate(lessons.get(i).endingOfCourse);
             dateFromList.timeOfCourse.set(Calendar.HOUR_OF_DAY,3);
 
             if(thisDate.timeOfCourse.before(dateFromList.timeOfCourse)) {
@@ -79,7 +79,7 @@ public class Lesson {
 
             thisDate.processMyDate(endingOfCourse);
 
-            dateFromList.processMyDate(lessons.get(i).beginningOfCourse);//дата окончания записи должна быть позже даты начала из базы для пересечения
+            dateFromList.processMyDate(lessons.get(i).beginningOfCourse);
             if(thisDate.timeOfCourse.before(dateFromList.timeOfCourse)) {
                 if(thisDate.timeOfCourse.get(Calendar.DAY_OF_WEEK) == dateFromList.timeOfCourse.get(Calendar.DAY_OF_WEEK)){
                     if(lessons.get(i).numberOfPara.equals(numberOfPara)){

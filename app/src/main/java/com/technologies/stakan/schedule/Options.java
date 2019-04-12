@@ -47,18 +47,17 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
     private boolean buttonAccessEnd;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { //создание всяких нужных штук и нахождение других нужных штук по id
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        ArrayAdapter<Integer> lessons = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paraData);  // Создание выпадающего списка
-        lessons.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<Integer> lessons = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paraData);
 
         numberOfPara = /*Spinner)*/ findViewById(R.id.numberOfPara);
         numberOfPara.setAdapter(lessons);
 
 
-        ArrayAdapter<String> type = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeData);  // Создание выпадающего списка
+        ArrayAdapter<String> type = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeData);
         lessons.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         typeOfLesson = /*Spinner*/ findViewById(R.id.typeOfLesson);

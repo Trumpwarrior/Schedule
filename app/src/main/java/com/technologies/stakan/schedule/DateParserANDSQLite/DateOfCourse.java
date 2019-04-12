@@ -36,7 +36,7 @@ public class DateOfCourse {
 
 
         timeOfCourse.setLenient(false);
-        timeOfCourse.set(getActuallyYear(),month -1 , day); // -1 нужен, потому что этот класс почему-то прибавляет единицу (хз)
+        timeOfCourse.set(getActuallyYear(),month -1 , day); // -1 нужен, потому что этот класс почему-то прибавляет единицу
 
         try { //проверка даты на действительность
             timeOfCourse.getTime();
@@ -52,6 +52,9 @@ public class DateOfCourse {
 
         if(timeOfCourse.get(Calendar.DAY_OF_WEEK) != endDate.timeOfCourse.get(Calendar.DAY_OF_WEEK)) {
             throw new DateException();
+        }
+        if(timeOfCourse.get(Calendar.DAY_OF_WEEK) == 1) {
+           throw new DateException();
         }
         if(timeOfCourse.after(endDate.timeOfCourse)) {
             throw new DateException();

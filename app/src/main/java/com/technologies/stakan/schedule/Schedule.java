@@ -20,6 +20,23 @@ import com.technologies.stakan.schedule.DateParserANDSQLite.LessonDao;
 
 public class Schedule extends AppCompatActivity {
 
+    private TextView infoText;
+    private LinearLayout linLayout;
+    private List<LinearLayout> layouts = new ArrayList<>();
+    private LessonDao lessonDao;
+
+    private final int DAYS = 6;
+    private final int LESSONS = 8;
+
+    private TableRow firstDay;
+    private TableRow secondDay;
+    private TableRow thirdDay;
+    private TableRow fourthDay;
+    private TableRow fifthDay;
+    private TableRow sixthDay;
+
+    private DisplayMetrics metrics;
+    private LinearLayout.LayoutParams lpView;
 
 
     @Override
@@ -27,23 +44,14 @@ public class Schedule extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shedule);
 
-        final int DAYS = 6;
-        final int LESSONS = 8;
 
-        DisplayMetrics metrics = new DisplayMetrics();
+        metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         AppDataBase db =  Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "database").allowMainThreadQueries().build();
-        LessonDao lessonDao = db.lessonDao();
+        lessonDao = db.lessonDao();
 
-        List<Lesson> allLessons = lessonDao.getAll();
-        List<Lesson> lessons = new ArrayList<Lesson>();
-
-        DateOfCourse date = new DateOfCourse();
-
-        TextView infoText;
-
-        LinearLayout.LayoutParams lpView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        lpView = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         TextView first = findViewById(R.id.first);
         TextView second = findViewById(R.id.second);
@@ -78,16 +86,56 @@ public class Schedule extends AppCompatActivity {
         saturday.setMinimumHeight(metrics.heightPixels/(DAYS+1));
 
 
-        TableRow firstDay = findViewById(R.id.firstDay);
-        TableRow secondDay = findViewById(R.id.secondDay);
-        TableRow thirdDay = findViewById(R.id.thirdDay);
-        TableRow fourthDay = findViewById(R.id.fourthDay);
-        TableRow fifthDay = findViewById(R.id.fifthDay);
-        TableRow sixthDay = findViewById(R.id.sixthDay);
+        firstDay = findViewById(R.id.firstDay);
+        secondDay = findViewById(R.id.secondDay);
+        thirdDay = findViewById(R.id.thirdDay);
+        fourthDay = findViewById(R.id.fourthDay);
+        fifthDay = findViewById(R.id.fifthDay);
+        sixthDay = findViewById(R.id.sixthDay);
+
+        layouts = createTable();
+
+        updateTable(layouts);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateTable(layouts);
+    }
+
+    private List<LinearLayout> createTable() {
+        List<LinearLayout> layouts = new ArrayList<>();
+
+        for (int day = 0; day < DAYS; day++) {
+
+            for (int lesson = 0; lesson < LESSONS; lesson++) {
+                linLayout = new LinearLayout(this);
+                linLayout.setBackgroundColor(0);
+                layouts.add(linLayout);
+
+                switch (day) {
+                    case 0:firstDay.addView(linLayout);break;
+                    case 1:secondDay.addView(linLayout);break;
+                    case 2:thirdDay.addView(linLayout);break;
+                    case 3:fourthDay.addView(linLayout);break;
+                    case 4:fifthDay.addView(linLayout);break;
+                    case 5:sixthDay.addView(linLayout);break;
+                }
+            }
+        }
+
+        return layouts;
+    }
 
 
-//КАКОЙ-ТО НЕПОНЯТНЫЙ ФОР, ТРОГАТЬ ЕГО КОНЕЧНО ЖЕ НЕ СТОИТ (ПОПРАВЛЮ МЕЙБИ)
 
+    private void updateTable(List<LinearLayout> layouts) {
+
+        DateOfCourse date = new DateOfCourse();
+        List<Lesson> allLessons = lessonDao.getAll();
+        List<Lesson> lessons = new ArrayList<>();
 
         for (int day = 0; day < DAYS; day++) {
 
@@ -101,35 +149,23 @@ public class Schedule extends AppCompatActivity {
             for (int lesson = 0; lesson < LESSONS; lesson++) {
 
                 infoText = new TextView(this);
-                LinearLayout linLayout = new LinearLayout(this);
-                linLayout.setOrientation(LinearLayout.VERTICAL);
                 infoText.setLayoutParams(lpView);
+                infoText.setMinimumHeight(metrics.heightPixels/(DAYS+1));
 
                 for (int i = 0; i < lessons.size();i++) {
                     if (Integer.parseInt(lessons.get(i).numberOfPara) == lesson) {
                         infoText.setText(lessons.get(i).toString());
+
+
+                        infoText.setTextColor(Color.BLACK);
+                        infoText.setBackgroundColor(Color.WHITE);
+
+                        layouts.get(((day) * LESSONS) + (lesson)).setBackgroundResource(R.drawable.customborder);
+                        layouts.get(((day) * LESSONS) + (lesson)).removeAllViews();
+                        layouts.get(((day) * LESSONS) + (lesson)).addView(infoText);
+                        layouts.get(((day) * LESSONS) + (lesson)).updateViewLayout(infoText, lpView);
                     }
                 }
-
-
-
-                linLayout.addView(infoText);
-
-                if(!infoText.getText().equals("")) {
-                    infoText.setTextColor(Color.BLACK);
-                    infoText.setBackgroundColor(Color.WHITE);
-                    linLayout.setBackgroundResource(R.drawable.customborder);
-                }
-
-                switch (day) {
-                    case 0:firstDay.addView(linLayout);break;
-                    case 1:secondDay.addView(linLayout);break;
-                    case 2:thirdDay.addView(linLayout);break;
-                    case 3:fourthDay.addView(linLayout);break;
-                    case 4:fifthDay.addView(linLayout);break;
-                    case 5:sixthDay.addView(linLayout);break;
-                }
-
             }
 
             lessons.clear();
