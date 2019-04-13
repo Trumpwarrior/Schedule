@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.DateParserANDSQLite;
+package com.technologies.stakan.schedule.Parsers;
 
 import com.technologies.stakan.schedule.Exceptions.DateException;
 

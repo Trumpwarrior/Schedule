@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.technologies.stakan.schedule.DateParserANDSQLite.AppDataBase;
-import com.technologies.stakan.schedule.DateParserANDSQLite.DateOfCourse;
-import com.technologies.stakan.schedule.DateParserANDSQLite.Lesson;
-import com.technologies.stakan.schedule.DateParserANDSQLite.LessonDao;
+import com.technologies.stakan.schedule.SQLite.AppDataBase;
+import com.technologies.stakan.schedule.Parsers.DateOfCourse;
+import com.technologies.stakan.schedule.SQLite.Lesson;
+import com.technologies.stakan.schedule.SQLite.LessonDao;
 
 public class Schedule extends AppCompatActivity {
 

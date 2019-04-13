@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.DateParserANDSQLite;
+package com.technologies.stakan.schedule.SQLite;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;

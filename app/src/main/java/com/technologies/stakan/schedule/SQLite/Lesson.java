@@ -1,9 +1,10 @@
-package com.technologies.stakan.schedule.DateParserANDSQLite;
+package com.technologies.stakan.schedule.SQLite;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.technologies.stakan.schedule.Exceptions.IntersectionException;
+import com.technologies.stakan.schedule.Parsers.DateOfCourse;
 
 import java.util.Calendar;
 import java.util.List;

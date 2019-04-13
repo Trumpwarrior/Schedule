@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.technologies.stakan.schedule.DateParserANDSQLite.*;
+import com.technologies.stakan.schedule.Parsers.DateOfCourse;
+import com.technologies.stakan.schedule.SQLite.*;
 import com.technologies.stakan.schedule.Exceptions.DateException;
 import com.technologies.stakan.schedule.Exceptions.EmptyTextField;
 import com.technologies.stakan.schedule.Exceptions.IntersectionException;
