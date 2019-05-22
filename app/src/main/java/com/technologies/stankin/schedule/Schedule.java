@@ -1,8 +1,8 @@
 package com.technologies.stankin.schedule;
 
+import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.LinearLayout;
@@ -19,7 +19,7 @@ import com.technologies.stankin.schedule.ParsersAndStuff.DateOfCourse;
 import com.technologies.stankin.schedule.SQLite.Lesson;
 import com.technologies.stankin.schedule.SQLite.LessonDao;
 
-public class Schedule extends AppCompatActivity {
+public class Schedule extends Activity {
 
     private TextView infoText;
     private LinearLayout linLayout;

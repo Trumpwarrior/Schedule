@@ -1,8 +1,8 @@
 package com.technologies.stankin.schedule;
 
+import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -25,7 +25,7 @@ import com.technologies.stankin.schedule.Exceptions.DateException;
 import com.technologies.stankin.schedule.Exceptions.EmptyTextField;
 import com.technologies.stankin.schedule.Exceptions.IntersectionException;
 
-public class Options extends AppCompatActivity implements View.OnClickListener {
+public class Options extends Activity implements View.OnClickListener {
 
     private EditText name;
     private EditText nameOfTeacher;
