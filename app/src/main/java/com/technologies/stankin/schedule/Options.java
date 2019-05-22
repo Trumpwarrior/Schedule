@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule;
+package com.technologies.stankin.schedule;
 
 import android.arch.persistence.room.Room;
 import android.graphics.Color;
@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -20,11 +19,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.technologies.stakan.schedule.Parsers.DateOfCourse;
-import com.technologies.stakan.schedule.SQLite.*;
-import com.technologies.stakan.schedule.Exceptions.DateException;
-import com.technologies.stakan.schedule.Exceptions.EmptyTextField;
-import com.technologies.stakan.schedule.Exceptions.IntersectionException;
+import com.technologies.stankin.schedule.ParsersAndStuff.DateOfCourse;
+import com.technologies.stankin.schedule.SQLite.*;
+import com.technologies.stankin.schedule.Exceptions.DateException;
+import com.technologies.stankin.schedule.Exceptions.EmptyTextField;
+import com.technologies.stankin.schedule.Exceptions.IntersectionException;
 
 public class Options extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,9 +40,6 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
     private AppDataBase db;
 
-    private final Integer[] paraData = {1, 2, 3, 4, 5, 6, 7, 8};
-    private final String[] typeData = {"Семинар","Лекция","Лабораторная"};
-
     private boolean buttonAccessBeg;
     private boolean buttonAccessEnd;
 
@@ -52,17 +48,9 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        ArrayAdapter<Integer> lessons = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paraData);
-
-        numberOfPara = /*Spinner)*/ findViewById(R.id.numberOfPara);
-        numberOfPara.setAdapter(lessons);
-
-
-        ArrayAdapter<String> type = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeData);
-        lessons.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        numberOfPara = /*Spinner*/ findViewById(R.id.numberOfPara);
 
         typeOfLesson = /*Spinner*/ findViewById(R.id.typeOfLesson);
-        typeOfLesson.setAdapter(type);
 
         addButton = /*Button*/ findViewById(R.id.addButton);
         name = /*EditText*/ findViewById(R.id.name);
@@ -86,14 +74,18 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher dateMatcher = Pattern.compile("\\d\\d\\.\\d\\d").matcher(s);
+                Matcher zerosMatcher = Pattern.compile("00").matcher(s);
                 if(!dateMatcher.matches()) {
                     buttonAccessBeg = false;
                     beginningOfCourse.setTextColor(Color.RED);
                 } else {
-                    buttonAccessBeg = true;
-                    beginningOfCourse.setTextColor(Color.GREEN);
+                        buttonAccessBeg = true;
+                        beginningOfCourse.setTextColor(Color.GREEN);
                 }
-
+                if(zerosMatcher.find()) {
+                    buttonAccessBeg = false;
+                    beginningOfCourse.setTextColor(Color.RED);
+                }
                 addButton.setClickable(buttonAccessBeg && buttonAccessEnd);
             }
         });
@@ -108,12 +100,17 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher dateMatcher = Pattern.compile("\\d\\d\\.\\d\\d").matcher(s);
+                Matcher zerosMatcher = Pattern.compile("00").matcher(s);
                 if(!dateMatcher.matches()) {
                     buttonAccessEnd = false;
                     endingOfCourse.setTextColor(Color.RED);
                 } else {
                     buttonAccessEnd = true;
                     endingOfCourse.setTextColor(Color.GREEN);
+                }
+                if(zerosMatcher.find()) {
+                    buttonAccessEnd = false;
+                    endingOfCourse.setTextColor(Color.RED);
                 }
 
                 addButton.setClickable(buttonAccessBeg && buttonAccessEnd);
@@ -164,7 +161,7 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
             }
             catch(EmptyTextField e) {
-                check.setText("Введите название занятия");
+                check.setText("Не заполнено одно из необходимых полей");
                 check.setTextColor(Color.RED);
                 return;
             }
@@ -183,10 +180,11 @@ public class Options extends AppCompatActivity implements View.OnClickListener {
 
     void initializeLesson(Lesson lesson) {
 
-        lesson.name = name.getText().toString();
-        lesson.nameOfTeacher = nameOfTeacher.getText().toString();
-        lesson.audienceNumber = audienceNumber.getText().toString();
-        lesson.typeOfLesson = typeData[(int)typeOfLesson.getSelectedItemId()];
+        lesson.courseInfo = name.getText().toString() + "\n" +
+                nameOfTeacher.getText().toString() + "\n" +
+                audienceNumber.getText().toString() + "\n" +
+                typeOfLesson.getSelectedItem();
+
         lesson.beginningOfCourse = beginningOfCourse.getText().toString();
         lesson.endingOfCourse = endingOfCourse.getText().toString();
         lesson.numberOfPara = String.valueOf(numberOfPara.getSelectedItemId());

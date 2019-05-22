@@ -1,10 +1,11 @@
-package com.technologies.stakan.schedule.SQLite;
+package com.technologies.stankin.schedule.SQLite;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.technologies.stakan.schedule.Exceptions.IntersectionException;
-import com.technologies.stakan.schedule.Parsers.DateOfCourse;
+import com.technologies.stankin.schedule.Exceptions.DateException;
+import com.technologies.stankin.schedule.Exceptions.IntersectionException;
+import com.technologies.stankin.schedule.ParsersAndStuff.DateOfCourse;
 
 import java.util.Calendar;
 import java.util.List;
@@ -15,13 +16,7 @@ public class Lesson {
     @PrimaryKey(autoGenerate = true)
     long id;
 
-    public String name;
-
-    public String nameOfTeacher;
-
-    public String audienceNumber;
-
-    public String typeOfLesson;
+    public String courseInfo;
 
     public String beginningOfCourse;
 
@@ -38,13 +33,7 @@ public class Lesson {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(name);
-        stringBuilder.append("\n");
-        stringBuilder.append(nameOfTeacher);
-        stringBuilder.append("\n");
-        stringBuilder.append(typeOfLesson);
-        stringBuilder.append(" ");
-        stringBuilder.append(audienceNumber);
+        stringBuilder.append(courseInfo);
         stringBuilder.append("\n");
         stringBuilder.append(beginningOfCourse);
         stringBuilder.append("-");
@@ -57,7 +46,7 @@ public class Lesson {
         return stringBuilder.toString();
     }
 
-    public void isAnyIntersections(List<Lesson> lessons) throws IntersectionException {
+    public void isAnyIntersections(List<Lesson> lessons) throws IntersectionException, DateException {
 
         DateOfCourse dateFromList = new DateOfCourse();
         DateOfCourse thisDate = new DateOfCourse();

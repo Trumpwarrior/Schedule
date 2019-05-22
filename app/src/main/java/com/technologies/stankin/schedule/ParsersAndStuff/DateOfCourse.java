@@ -1,6 +1,6 @@
-package com.technologies.stakan.schedule.Parsers;
+package com.technologies.stankin.schedule.ParsersAndStuff;
 
-import com.technologies.stakan.schedule.Exceptions.DateException;
+import com.technologies.stankin.schedule.Exceptions.DateException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -23,7 +23,7 @@ public class DateOfCourse {
     public Integer getMonth() { return month; }
 
 
-    public void processMyDate(String date) {
+    public void processMyDate(String date) throws DateException {
 
         Matcher dateMatcher = Pattern.compile("\\d\\d").matcher(date);
 
@@ -40,9 +40,8 @@ public class DateOfCourse {
 
         try { //проверка даты на действительность
             timeOfCourse.getTime();
-        }catch (Exception e) {
-            day = 0;
-            month = 0;
+        }catch (Exception e){
+            throw new DateException();
         }
 
 

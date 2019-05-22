@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.SQLite;
+package com.technologies.stankin.schedule.SQLite;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;

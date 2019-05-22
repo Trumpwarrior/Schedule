@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule.Exceptions;
+package com.technologies.stankin.schedule.Exceptions;
 
 public class IntersectionException extends Exception {
 }

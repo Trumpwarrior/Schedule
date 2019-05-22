@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule;
+package com.technologies.stankin.schedule;
 
 import android.arch.persistence.room.Room;
 import android.graphics.Color;
@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.technologies.stakan.schedule.SQLite.AppDataBase;
-import com.technologies.stakan.schedule.Parsers.DateOfCourse;
-import com.technologies.stakan.schedule.SQLite.Lesson;
-import com.technologies.stakan.schedule.SQLite.LessonDao;
+import com.technologies.stankin.schedule.Exceptions.DateException;
+import com.technologies.stankin.schedule.SQLite.AppDataBase;
+import com.technologies.stankin.schedule.ParsersAndStuff.DateOfCourse;
+import com.technologies.stankin.schedule.SQLite.Lesson;
+import com.technologies.stankin.schedule.SQLite.LessonDao;
 
 public class Schedule extends AppCompatActivity {
 
@@ -138,13 +139,14 @@ public class Schedule extends AppCompatActivity {
         List<Lesson> lessons = new ArrayList<>();
 
         for (int day = 0; day < DAYS; day++) {
-
-            for (int i = 0; i < allLessons.size();i++) {
-                date.processMyDate(allLessons.get(i).beginningOfCourse);
-                if((date.timeOfCourse.get(Calendar.DAY_OF_WEEK)-2) == day) {
-                    lessons.add(allLessons.get(i));
+            try {
+                for (int i = 0; i < allLessons.size();i++) {
+                    date.processMyDate(allLessons.get(i).beginningOfCourse);
+                    if((date.timeOfCourse.get(Calendar.DAY_OF_WEEK)-2) == day) {
+                        lessons.add(allLessons.get(i));
+                    }
                 }
-            }
+            }catch (DateException e){}
 
             for (int lesson = 0; lesson < LESSONS; lesson++) {
 

@@ -1,4 +1,4 @@
-package com.technologies.stakan.schedule;
+package com.technologies.stankin.schedule;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         options = findViewById(R.id.options);
         options.setOnClickListener(this);
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intentSchdule.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivityIfNeeded(intentSchdule, 0);
         }
+
     }
 
 }
